@@ -14,7 +14,7 @@ export class FoodsService {
 
   // Crear un alimento en la biblioteca compartida de la cuenta
   async create(createFoodDto: CreateFoodDto): Promise<Food> {
-    const newFood = this.foodRepository.create(createFoodDto);
+    const newFood: Food = this.foodRepository.create(createFoodDto);
     return await this.foodRepository.save(newFood);
   }
 
@@ -29,7 +29,9 @@ export class FoodsService {
 
   // Buscar un alimento específico por ID
   async findOne(id: number): Promise<Food> {
-    const food = await this.foodRepository.findOne({ where: { id } });
+    const food: Food | null = await this.foodRepository.findOne({
+      where: { id },
+    });
     if (!food) {
       throw new NotFoundException(`Alimento con ID ${id} no encontrado`);
     }
@@ -38,14 +40,14 @@ export class FoodsService {
 
   // Actualizar datos del alimento
   async update(id: number, updateFoodDto: UpdateFoodDto): Promise<Food> {
-    const food = await this.findOne(id);
-    const updatedFood = this.foodRepository.merge(food, updateFoodDto);
+    const food: Food = await this.findOne(id);
+    const updatedFood: Food = this.foodRepository.merge(food, updateFoodDto);
     return await this.foodRepository.save(updatedFood);
   }
 
   // Eliminar un alimento
   async remove(id: number): Promise<void> {
-    const food = await this.findOne(id);
+    const food: Food = await this.findOne(id);
     await this.foodRepository.remove(food);
   }
 }
