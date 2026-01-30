@@ -1,26 +1,51 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFoodDto } from './dto/create-food.dto';
 import { UpdateFoodDto } from './dto/update-food.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Food } from './entities/food.entity';
+import { Repository } from 'typeorm/browser/repository/Repository.js';
 
 @Injectable()
 export class FoodsService {
-  create(createFoodDto: CreateFoodDto) {
-    return 'This action adds a new food';
+  constructor(
+    @InjectRepository(Food)
+    private readonly foodRepository: Repository<Food>,
+  ) {}
+
+  // Crear un alimento en la biblioteca compartida de la cuenta
+  async create(createFoodDto: CreateFoodDto): Promise<Food> {
+    const newFood = this.foodRepository.create(createFoodDto);
+    return await this.foodRepository.save(newFood);
   }
 
-  findAll() {
-    return `This action returns all foods`;
+  // Obtener todos los alimentos de UNA cuenta específica
+  // Esto cumple con el requerimiento de "Lista conjunta para todos los perfiles"
+  async findAllByAccount(accountId: number): Promise<Food[]> {
+    return await this.foodRepository.find({
+      where: { accountId },
+      order: { name: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} food`;
+  // Buscar un alimento específico por ID
+  async findOne(id: number): Promise<Food> {
+    const food = await this.foodRepository.findOne({ where: { id } });
+    if (!food) {
+      throw new NotFoundException(`Alimento con ID ${id} no encontrado`);
+    }
+    return food;
   }
 
-  update(id: number, updateFoodDto: UpdateFoodDto) {
-    return `This action updates a #${id} food`;
+  // Actualizar datos del alimento
+  async update(id: number, updateFoodDto: UpdateFoodDto): Promise<Food> {
+    const food = await this.findOne(id);
+    const updatedFood = this.foodRepository.merge(food, updateFoodDto);
+    return await this.foodRepository.save(updatedFood);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} food`;
+  // Eliminar un alimento
+  async remove(id: number): Promise<void> {
+    const food = await this.findOne(id);
+    await this.foodRepository.remove(food);
   }
 }
