@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTrackingDto } from './dto/create-log.dto';
-import { UpdateTrackingDto } from './dto/update-log.dto';
+import { CreateLogDto } from './dto/create-log.dto';
+import { UpdateLogDto } from './dto/update-log.dto';
 
 @Injectable()
 export class TrackingService {
-  create(createTrackingDto: CreateTrackingDto) {
-    return 'This action adds a new tracking';
+  create(createLogDto: CreateLogDto) {
+    return 'This action adds a new log';
   }
 
   findAll() {
-    return `This action returns all tracking`;
+    return `This action returns all logs`;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} tracking`;
+    return `This action returns a #${id} log`;
   }
 
-  update(id: number, updateTrackingDto: UpdateTrackingDto) {
-    return `This action updates a #${id} tracking`;
+  update(id: number, updateLogDto: UpdateLogDto) {
+    return `This action updates a #${id} log`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} tracking`;
+    return `This action removes a #${id} log`;
   }
 }

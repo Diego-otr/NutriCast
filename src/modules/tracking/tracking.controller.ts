@@ -8,16 +8,16 @@ import {
   Delete,
 } from '@nestjs/common';
 import { TrackingService } from './tracking.service';
-import { CreateTrackingDto } from './dto/create-log.dto';
-import { UpdateTrackingDto } from './dto/update-log.dto';
+import { CreateLogDto } from './dto/create-log.dto';
+import { UpdateLogDto } from './dto/update-log.dto';
 
 @Controller('tracking')
 export class TrackingController {
   constructor(private readonly trackingService: TrackingService) {}
 
   @Post()
-  create(@Body() createTrackingDto: CreateTrackingDto) {
-    return this.trackingService.create(createTrackingDto);
+  create(@Body() createLogDto: CreateLogDto) {
+    return this.trackingService.create(createLogDto);
   }
 
   @Get()
@@ -31,11 +31,8 @@ export class TrackingController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTrackingDto: UpdateTrackingDto,
-  ) {
-    return this.trackingService.update(+id, updateTrackingDto);
+  update(@Param('id') id: string, @Body() updateLogDto: UpdateLogDto) {
+    return this.trackingService.update(+id, updateLogDto);
   }
 
   @Delete(':id')
