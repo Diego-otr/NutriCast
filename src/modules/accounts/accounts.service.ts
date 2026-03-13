@@ -3,6 +3,7 @@ import { CreateAccountDto } from './dto/create-account.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account } from './entities/account.entity';
+import { FindByEmailDto } from './dto/find-by-email.dto';
 @Injectable()
 export class AccountsService {
   constructor(
@@ -22,8 +23,10 @@ export class AccountsService {
     });
   }
 
-  async findByEmail(email: string) {
-    return await this.accountRepository.findOne({ where: { email } });
+  async findByEmail(email: FindByEmailDto) {
+    return await this.accountRepository.findOne({
+      where: { email: email.email },
+    });
   }
 
   async remove(id: number) {

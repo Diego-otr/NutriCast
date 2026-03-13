@@ -1,4 +1,3 @@
-// src/modules/accounts/entities/account.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
