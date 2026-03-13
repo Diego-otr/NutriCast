@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
-import { TrackingModule } from './modules/tracking/tracking.module';
+import { TrackerModule } from './modules/tracker/tracker.module';
 
 @Module({
   imports: [
@@ -25,7 +25,7 @@ import { TrackingModule } from './modules/tracking/tracking.module';
     FoodsModule,
     ProfilesModule,
     AccountsModule,
-    TrackingModule,
+    TrackerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

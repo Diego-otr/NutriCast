@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Account } from '../../accounts/entities/account.entity';
-import { ConsumptionLog } from '../../tracking/entities/consumption-log.entity';
+import { ConsumptionLog } from '../../tracker/entities/consumption-log.entity';
 @Entity('foods')
 export class Food {
   @PrimaryGeneratedColumn()

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TrackingService } from './tracking.service';
-import { TrackingController } from './tracking.controller';
+import { DailyProgressService } from './daily-progress.service';
+import { TrackingController } from './tracker.controller';
 import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { ConsumptionLog } from './entities/consumption-log.entity';
 import { DailyProgress } from './entities/daily-progress.entity';
@@ -11,6 +11,6 @@ import { DailyProgress } from './entities/daily-progress.entity';
     TypeOrmModule.forFeature([DailyProgress]),
   ],
   controllers: [TrackingController],
-  providers: [TrackingService],
+  providers: [DailyProgressService],
 })
-export class TrackingModule {}
+export class TrackerModule {}

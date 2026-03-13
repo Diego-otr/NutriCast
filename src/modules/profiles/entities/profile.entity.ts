@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Account } from '../../accounts/entities/account.entity';
-import { DailyProgress } from '../../tracking/entities/daily-progress.entity';
+import { DailyProgress } from '../../tracker/entities/daily-progress.entity';
 
 @Entity('profiles')
 export class Profile {
