@@ -21,13 +21,18 @@ export class ProfilesService {
     return await this.profileRepository.find({ where: { accountId } });
   }
 
-  async update(id: number, updateProfileDto: UpdateProfileDto) {
+  async findOne(id: number) {
     const profile: Profile | null = await this.profileRepository.findOne({
       where: { id },
     });
     if (!profile) {
       throw new NotFoundException(`Perfil con ID ${id} no encontrado`);
     }
+    return profile;
+  }
+
+  async update(id: number, updateProfileDto: UpdateProfileDto) {
+    const profile: Profile = await this.findOne(id);
     const updatedProfile = this.profileRepository.merge(
       profile,
       updateProfileDto,
