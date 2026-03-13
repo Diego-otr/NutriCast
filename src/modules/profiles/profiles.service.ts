@@ -12,16 +12,16 @@ export class ProfilesService {
     private readonly profileRepository: Repository<Profile>,
   ) {}
 
-  async create(createProfileDto: CreateProfileDto) {
+  async create(createProfileDto: CreateProfileDto): Promise<Profile> {
     const profile: Profile = this.profileRepository.create(createProfileDto);
     return await this.profileRepository.save(profile);
   }
 
-  async findAllByAccount(accountId: number) {
+  async findAllByAccount(accountId: number): Promise<Profile[]> {
     return await this.profileRepository.find({ where: { accountId } });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Profile> {
     const profile: Profile | null = await this.profileRepository.findOne({
       where: { id },
     });
@@ -31,7 +31,10 @@ export class ProfilesService {
     return profile;
   }
 
-  async update(id: number, updateProfileDto: UpdateProfileDto) {
+  async update(
+    id: number,
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<Profile> {
     const profile: Profile = await this.findOne(id);
     const updatedProfile = this.profileRepository.merge(
       profile,
@@ -40,7 +43,9 @@ export class ProfilesService {
     return await this.profileRepository.save(updatedProfile);
   }
 
-  async remove(id: number) {
-    return await this.profileRepository.delete(id);
+  async remove(id: number): Promise<Profile> {
+    const profile: Profile = await this.findOne(id);
+    await this.profileRepository.delete(id);
+    return profile;
   }
 }
