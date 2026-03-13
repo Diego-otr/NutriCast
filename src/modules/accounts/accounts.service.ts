@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,25 +11,37 @@ export class AccountsService {
     private readonly accountRepository: Repository<Account>,
   ) {}
 
-  async create(createAccountDto: CreateAccountDto) {
+  async create(createAccountDto: CreateAccountDto): Promise<Account> {
     const account: Account = this.accountRepository.create(createAccountDto);
     return await this.accountRepository.save(account);
   }
 
-  async findOne(id: number) {
-    return await this.accountRepository.findOne({
+  async findOne(id: number): Promise<Account> {
+    const account: Account | null = await this.accountRepository.findOne({
       where: { id },
       relations: ['profiles'],
     });
+    if (!account) {
+      throw new NotFoundException(`Account with ID ${id} not found`);
+    }
+    return account;
   }
 
-  async findByEmail(email: FindByEmailDto) {
-    return await this.accountRepository.findOne({
+  async findByEmail(email: FindByEmailDto): Promise<Account> {
+    const account: Account | null = await this.accountRepository.findOne({
       where: { email: email.email },
     });
+    if (!account) {
+      throw new NotFoundException(
+        `Account with email ${email.email} not found`,
+      );
+    }
+    return account;
   }
 
-  async remove(id: number) {
-    return await this.accountRepository.delete(id);
+  async remove(id: number): Promise<Account> {
+    const account: Account = await this.findOne(id);
+    await this.accountRepository.delete(id);
+    return account;
   }
 }
