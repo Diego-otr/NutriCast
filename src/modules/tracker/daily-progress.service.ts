@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateLogDto } from './dto/create-log.dto';
-import { UpdateLogDto } from './dto/update-log.dto';
 import { Repository } from 'typeorm/browser/repository/Repository.js';
 import { DailyProgress } from './entities/daily-progress.entity';
 import { InjectRepository } from '@nestjs/typeorm/dist/common/typeorm.decorators';
+import { CreateDailyDto } from './dto/create-daily.dto';
+import { UpdateDailyDto } from './dto/update-daily.dto';
+import { UpdateResult } from 'typeorm';
+import { ConsumptionLog } from './entities/consumption-log.entity';
 
 @Injectable()
 export class DailyProgressService {
@@ -12,9 +14,9 @@ export class DailyProgressService {
     private readonly dailyProgressRepository: Repository<DailyProgress>,
   ) {}
 
-  async create(createLogDto: CreateLogDto): Promise<DailyProgress> {
+  async create(createDailyDto: CreateDailyDto): Promise<CreateDailyDto> {
     const dailyProgress: DailyProgress =
-      this.dailyProgressRepository.create(createLogDto);
+      this.dailyProgressRepository.create(createDailyDto);
     return await this.dailyProgressRepository.save(dailyProgress);
   }
 
@@ -27,10 +29,49 @@ export class DailyProgressService {
     return dailyProgress;
   }
 
-  async update(id: number, updateLogDto: UpdateLogDto): Promise<DailyProgress> {
-    await this.findOne(id);
-    await this.dailyProgressRepository.update(id, updateLogDto);
-    return this.findOne(id);
+  async update(
+    id: number,
+    updateDailyDto: UpdateDailyDto,
+  ): Promise<UpdateResult> {
+    return await this.dailyProgressRepository.update(id, updateDailyDto);
+  }
+
+  async toggleFinalizeDay(id: number): Promise<boolean> {
+    const dailyProgress = await this.findOne(id);
+    dailyProgress.isFinalized = !dailyProgress.isFinalized;
+    await this.dailyProgressRepository.save(dailyProgress);
+    return dailyProgress.isFinalized;
+  }
+
+  async toggleSkipDay(id: number): Promise<boolean> {
+    const dailyProgress = await this.findOne(id);
+    dailyProgress.isSkiped = !dailyProgress.isSkiped;
+    await this.dailyProgressRepository.save(dailyProgress);
+    return dailyProgress.isSkiped;
+  }
+
+  async addLogToDailyProgress(
+    dailyProgressId: number,
+    consumptionLog: ConsumptionLog,
+  ): Promise<DailyProgress> {
+    const dailyProgress = await this.findOne(dailyProgressId);
+    dailyProgress.logs.push(consumptionLog);
+    dailyProgress.totalCaloriesSum += consumptionLog.calculatedCalories;
+    await this.dailyProgressRepository.save(dailyProgress);
+    return dailyProgress;
+  }
+
+  async removeLogFromDailyProgress(
+    dailyProgressId: number,
+    consumptionLog: ConsumptionLog,
+  ): Promise<DailyProgress> {
+    const dailyProgress = await this.findOne(dailyProgressId);
+    dailyProgress.logs = dailyProgress.logs.filter(
+      (log) => log.id !== consumptionLog.id,
+    );
+    dailyProgress.totalCaloriesSum -= consumptionLog.calculatedCalories;
+    await this.dailyProgressRepository.save(dailyProgress);
+    return dailyProgress;
   }
 
   async remove(id: number): Promise<DailyProgress> {
