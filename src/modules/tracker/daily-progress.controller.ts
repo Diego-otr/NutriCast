@@ -7,36 +7,31 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { TrackingService } from './daily-progress.service';
+import { DailyProgressService } from './daily-progress.service';
 import { CreateLogDto } from './dto/create-log.dto';
 import { UpdateLogDto } from './dto/update-log.dto';
 
-@Controller('tracking')
-export class TrackingController {
-  constructor(private readonly trackingService: TrackingService) {}
+@Controller('daily-progress')
+export class DailyProgressController {
+  constructor(private readonly dailyProgressService: DailyProgressService) {}
 
   @Post()
   create(@Body() createLogDto: CreateLogDto) {
-    return this.trackingService.create(createLogDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.trackingService.findAll();
+    return this.dailyProgressService.create(createLogDto);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.trackingService.findOne(+id);
+    return this.dailyProgressService.findOne(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateLogDto: UpdateLogDto) {
-    return this.trackingService.update(+id, updateLogDto);
+    return this.dailyProgressService.update(+id, updateLogDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.trackingService.remove(+id);
+    return this.dailyProgressService.remove(+id);
   }
 }
