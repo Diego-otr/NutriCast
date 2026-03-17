@@ -14,7 +14,7 @@ export class DailyProgressService {
     private readonly dailyProgressRepository: Repository<DailyProgress>,
   ) {}
 
-  async create(createDailyDto: CreateDailyDto): Promise<CreateDailyDto> {
+  async create(createDailyDto: CreateDailyDto): Promise<DailyProgress> {
     const dailyProgress: DailyProgress =
       this.dailyProgressRepository.create(createDailyDto);
     return await this.dailyProgressRepository.save(dailyProgress);
