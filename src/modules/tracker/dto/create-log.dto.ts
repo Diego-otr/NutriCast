@@ -1,4 +1,10 @@
-import { IsNumber, IsNotEmpty, IsOptional, Min } from 'class-validator';
+import {
+  IsNumber,
+  IsNotEmpty,
+  IsOptional,
+  Min,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreateLogDto {
   @IsNumber()
@@ -18,4 +24,7 @@ export class CreateLogDto {
   @Min(1)
   @IsOptional()
   portions?: number;
+
+  @IsBoolean()
+  perPortions: boolean;
 }

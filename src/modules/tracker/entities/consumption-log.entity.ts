@@ -17,6 +17,9 @@ export class ConsumptionLog {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amountGrams: number;
 
+  @Column()
+  portions: number;
+
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   calculatedCalories: number;
 
