@@ -15,11 +15,9 @@ import { DailyProgress } from './entities/daily-progress.entity';
 import { ConsumptionLogService } from './consumption-log.service';
 import { CreateLogDto } from './dto/create-log.dto';
 import { FoodsService } from '../foods/foods.service';
-import { ConsumptionLog } from './entities/consumption-log.entity';
-import { Food } from '../foods/entities/food.entity';
 
 @Controller('tracker')
-export class TrackerController {
+export class Tracker {
   constructor(
     private readonly dailyProgressService: DailyProgressService,
     private readonly consumptionLogService: ConsumptionLogService,
@@ -27,17 +25,17 @@ export class TrackerController {
   ) {}
 
   @Post('daily-progress')
-  createDaily(@Body() createDailyDto: CreateDailyDto): Promise<DailyProgress> {
+  create(@Body() createDailyDto: CreateDailyDto): Promise<DailyProgress> {
     return this.dailyProgressService.create(createDailyDto);
   }
 
   @Get('daily-progress/:id')
-  findOneDaily(@Param('id') id: string): Promise<DailyProgress> {
+  findOne(@Param('id') id: string): Promise<DailyProgress> {
     return this.dailyProgressService.findOne(+id);
   }
 
   @Patch('daily-progress/:id')
-  updateDaily(
+  update(
     @Param('id') id: string,
     @Body() updateLogDto: UpdateLogDto,
   ): Promise<UpdateResult> {
@@ -72,7 +70,7 @@ export class TrackerController {
     @Param('dailyProgressId') dailyProgressId: string,
     @Param('logId') consumptionLogId: string,
   ): Promise<DailyProgress> {
-    const consumptionLog: ConsumptionLog =
+    const consumptionLog =
       await this.consumptionLogService.findOne(+consumptionLogId);
     return this.dailyProgressService.removeLogFromDailyProgress(
       +dailyProgressId,
@@ -83,29 +81,5 @@ export class TrackerController {
   @Delete('daily-progress/:id')
   remove(@Param('id') id: string): Promise<DailyProgress> {
     return this.dailyProgressService.remove(+id);
-  }
-
-  @Post('consumption-log')
-  async createLog(@Body() createLogDto: CreateLogDto): Promise<ConsumptionLog> {
-    const food: Food = await this.foodService.findOne(createLogDto.foodId);
-    return this.consumptionLogService.create(createLogDto, food);
-  }
-
-  @Get('consumption-log/:id')
-  findOneLog(@Param('id') id: string): Promise<ConsumptionLog> {
-    return this.consumptionLogService.findOne(+id);
-  }
-
-  @Patch('consumption-log/:id')
-  updateLog(
-    @Param('id') id: string,
-    @Body() updateLogDto: UpdateLogDto,
-  ): Promise<UpdateResult> {
-    return this.consumptionLogService.update(+id, updateLogDto);
-  }
-
-  @Delete('consumption-log/:id')
-  removeLog(@Param('id') id: string): Promise<ConsumptionLog> {
-    return this.consumptionLogService.remove(+id);
   }
 }
