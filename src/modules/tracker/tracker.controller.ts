@@ -36,6 +36,13 @@ export class TrackerController {
     return this.dailyProgressService.findOne(+id);
   }
 
+  @Get('daily-progress/profile/:profileId')
+  findAllByProfile(
+    @Param('profileId') profileId: string,
+  ): Promise<DailyProgress[]> {
+    return this.dailyProgressService.findAllByProfile(+profileId);
+  }
+
   @Patch('daily-progress/:id')
   updateDaily(
     @Param('id') id: string,

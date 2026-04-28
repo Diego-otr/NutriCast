@@ -28,6 +28,13 @@ export class DailyProgressService {
     return dailyProgress;
   }
 
+  async findAllByProfile(profileId: number): Promise<DailyProgress[]> {
+    return await this.dailyProgressRepository.find({
+      where: { profileId },
+      order: { referenceDate: 'DESC' },
+    });
+  }
+
   async update(
     id: number,
     updateDailyDto: UpdateDailyDto,
