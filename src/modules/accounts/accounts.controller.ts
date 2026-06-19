@@ -9,13 +9,27 @@ import {
 } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
-import { FindByEmailDto } from './dto/find-by-email.dto';
+import type { FindByEmailDto } from './dto/find-by-email.dto';
 import { AccountItemHateoasInterceptor } from './interceptors/account-item-hateoas.interceptor';
 import { AccountDeleteHateoasInterceptor } from './interceptors/account-delete-hateoas.interceptor';
+import type { HateoasMessage } from '../../types/hateoas.interface';
 
 @Controller('accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
+
+  @Get()
+  getHateoasLinks(): HateoasMessage {
+    return {
+      message: 'Enlaces disponibles para cuentas',
+      _links: {
+        create: { href: '/accounts', method: 'POST' },
+        findById: { href: '/accounts/{id}', method: 'GET' },
+        findByEmail: { href: '/accounts/{email}', method: 'GET' },
+        delete: { href: '/accounts/{id}', method: 'DELETE' },
+      },
+    };
+  }
 
   @Post()
   @UseInterceptors(AccountItemHateoasInterceptor) // <--- Interceptor Individual

@@ -21,6 +21,7 @@ import { Food } from '../foods/entities/food.entity';
 import { DailyProgressItemHateoasInterceptor } from './interceptors/daily-progress-item-hateoas.interceptor';
 import { DailyProgressCollectionHateoasInterceptor } from './interceptors/daily-progress-collection-hateoas.interceptor';
 import { DailyProgressDeleteHateoasInterceptor } from './interceptors/daily-progress-delete-hateoas.interceptor';
+import type { HateoasMessage } from '../../types/hateoas.interface';
 
 @Controller('tracker')
 export class TrackerController {
@@ -29,6 +30,99 @@ export class TrackerController {
     private readonly consumptionLogService: ConsumptionLogService,
     private readonly foodService: FoodsService,
   ) {}
+
+  @Get()
+  getTrackerLinks(): HateoasMessage {
+    return {
+      message: 'Enlaces principales del tracker',
+      _links: {
+        dailyProgress: {
+          href: '/tracker/daily-progress',
+          method: 'GET',
+        },
+        consumptionLog: {
+          href: '/tracker/consumption-log',
+          method: 'GET',
+        },
+      },
+    };
+  }
+
+  // Enlace para obtener los enlaces HATEOAS relacionados con daily-progress
+  @Get('daily-progress')
+  getDailyProgressLinks(): HateoasMessage {
+    return {
+      message: 'Enlaces disponibles para daily-progress',
+      _links: {
+        create: {
+          href: '/tracker/daily-progress',
+          method: 'POST',
+        },
+        findById: {
+          href: '/tracker/daily-progress/{id}',
+          method: 'GET',
+        },
+        findByProfile: {
+          href: '/tracker/daily-progress/profile/{profileId}',
+          method: 'GET',
+        },
+        update: {
+          href: '/tracker/daily-progress/{id}',
+          method: 'PATCH',
+        },
+        delete: {
+          href: '/tracker/daily-progress/{id}',
+          method: 'DELETE',
+        },
+        finalize: {
+          href: '/tracker/daily-progress/{id}/finalize',
+          method: 'PATCH',
+        },
+        skip: {
+          href: '/tracker/daily-progress/{id}/skip',
+          method: 'PATCH',
+        },
+        addConsumptionLog: {
+          href: '/tracker/daily-progress/{id}/add-log',
+          method: 'PATCH',
+        },
+        removeConsumptionLog: {
+          href: '/tracker/daily-progress/{id}/remove-log',
+          method: 'PATCH',
+        },
+        remove: {
+          href: '/tracker/daily-progress/{id}',
+          method: 'DELETE',
+        },
+      },
+    };
+  }
+
+  // Enlace para obtener los enlaces HATEOAS relacionados con consumption-log
+  @Get('consumption-log')
+  getConsumptionLogLinks(): HateoasMessage {
+    return {
+      message: 'Enlaces disponibles para consumption-log',
+      _links: {
+        create: {
+          href: '/tracker/consumption-log',
+          method: 'POST',
+        },
+        findById: {
+          href: '/tracker/consumption-log/{id}',
+          method: 'GET',
+        },
+        update: {
+          href: '/tracker/consumption-log/{id}',
+          method: 'PATCH',
+        },
+        delete: {
+          href: '/tracker/consumption-log/{id}',
+          method: 'DELETE',
+        },
+      },
+    };
+  }
 
   @Post('daily-progress')
   @UseInterceptors(DailyProgressItemHateoasInterceptor) // <--- Interceptor Individual

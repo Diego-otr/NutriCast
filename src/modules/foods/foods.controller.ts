@@ -15,10 +15,25 @@ import { FoodItemHateoasInterceptor } from './interceptors/food-item-hateoas.int
 import { FoodCollectionHateoasInterceptor } from './interceptors/food-collection-hateoas.interceptor';
 import { FoodDeleteHateoasInterceptor } from './interceptors/food-delete-hateoas.interceptor';
 import { Food } from './entities/food.entity';
+import type { HateoasMessage } from '../../types/hateoas.interface';
 
 @Controller('foods')
 export class FoodsController {
   constructor(private readonly foodsService: FoodsService) {}
+
+  @Get()
+  getHateoasLinks(): HateoasMessage {
+    return {
+      message: 'Enlaces disponibles para alimentos',
+      _links: {
+        create: { href: '/foods', method: 'POST' },
+        findById: { href: '/foods/{id}', method: 'GET' },
+        findByAccount: { href: '/foods/account/{accountId}', method: 'GET' },
+        update: { href: '/foods/{id}', method: 'PATCH' },
+        delete: { href: '/foods/{id}', method: 'DELETE' },
+      },
+    };
+  }
 
   @Post()
   @UseInterceptors(FoodItemHateoasInterceptor) // <--- Interceptor Individual

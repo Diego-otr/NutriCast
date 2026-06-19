@@ -15,10 +15,25 @@ import { ProfileItemHateoasInterceptor } from './interceptors/profiles-item-hate
 import { ProfileCollectionHateoasInterceptor } from './interceptors/profiles-collection-hateoas.interceptor';
 import { ProfileDeleteHateoasInterceptor } from './interceptors/profiles-delete-hateoas.interceptor';
 import { Profile } from './entities/profile.entity';
+import type { HateoasMessage } from '../../types/hateoas.interface';
 
 @Controller('profiles')
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
+
+  @Get()
+  getHateoasLinks(): HateoasMessage {
+    return {
+      message: 'Enlaces disponibles para perfiles',
+      _links: {
+        create: { href: '/profiles', method: 'POST' },
+        findById: { href: '/profiles/{id}', method: 'GET' },
+        findByAccount: { href: '/profiles/account/{accountId}', method: 'GET' },
+        update: { href: '/profiles/{id}', method: 'PATCH' },
+        delete: { href: '/profiles/{id}', method: 'DELETE' },
+      },
+    };
+  }
 
   @Post()
   @UseInterceptors(ProfileItemHateoasInterceptor) // <--- Interceptor Individual

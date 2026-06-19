@@ -1,8 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import type { HateoasMessage } from './types/hateoas.interface';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  getHello(): HateoasMessage {
+    return {
+      message: 'API principal - enlaces disponibles',
+      _links: {
+        accounts: { href: '/accounts', method: 'GET' },
+        profiles: { href: '/profiles', method: 'GET' },
+        foods: { href: '/foods', method: 'GET' },
+        tracker: { href: '/tracker', method: 'GET' },
+      },
+    };
   }
 }
