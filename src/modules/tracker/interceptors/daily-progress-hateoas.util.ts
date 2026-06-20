@@ -11,9 +11,9 @@ export function generateDailyProgressLinks(
   const plainEntity = instanceToPlain(entity) as DailyProgress;
 
   const links: HateoasLinks = {
-    self: { href: `tracker/daily-progress/${entity.id}`, method: 'GET' },
-    update: { href: `tracker/daily-progress/${entity.id}`, method: 'PATCH' },
-    delete: { href: `tracker/daily-progress/${entity.id}`, method: 'DELETE' },
+    self: { href: `/tracker/daily-progress/${entity.id}`, method: 'GET' },
+    update: { href: `/tracker/daily-progress/${entity.id}`, method: 'PATCH' },
+    delete: { href: `/tracker/daily-progress/${entity.id}`, method: 'DELETE' },
   };
 
   if (entity.profileId) {

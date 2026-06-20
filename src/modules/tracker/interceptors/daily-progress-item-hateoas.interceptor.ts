@@ -23,6 +23,26 @@ export class DailyProgressItemHateoasInterceptor implements NestInterceptor<
       map((data: DailyProgress) => {
         const response = generateDailyProgressLinks(data);
 
+        response._links.finalize = {
+          href: `/tracker/daily-progress/${data.id}/finalize`,
+          method: 'PATCH',
+        };
+        response._links.skip = {
+          href: `/tracker/daily-progress/${data.id}/skip`,
+          method: 'PATCH',
+        };
+        response._links.addLog = {
+          href: `/tracker/daily-progress/${data.id}/add-log`,
+          method: 'PATCH',
+        };
+
+        if (data.logs && data.logs.length > 0) {
+          response._links.removeLog = {
+            href: `/tracker/daily-progress/${data.id}/remove-log/{logId}`,
+            method: 'DELETE',
+          };
+        }
+
         return response;
       }),
     );
