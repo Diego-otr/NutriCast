@@ -22,6 +22,8 @@ import { DailyProgressItemHateoasInterceptor } from './interceptors/daily-progre
 import { DailyProgressCollectionHateoasInterceptor } from './interceptors/daily-progress-collection-hateoas.interceptor';
 import { DailyProgressDeleteHateoasInterceptor } from './interceptors/daily-progress-delete-hateoas.interceptor';
 import type { HateoasMessage } from '../../types/hateoas.interface';
+import { ConsumptionLogItemHateoasInterceptor } from './interceptors/consumption-log-item.interceptor';
+import { ConsumptionLogDeleteHateoasInterceptor } from './interceptors/consumption-log-delete.interceptor';
 
 @Controller('tracker')
 export class TrackerController {
@@ -182,7 +184,7 @@ export class TrackerController {
   }
 
   @Delete('daily-progress/:dailyProgressId/remove-log/:logId')
-  //Añadir interceptor de eliminación de consumption log
+  @UseInterceptors(DailyProgressItemHateoasInterceptor) // <--- Interceptor Individual
   async removeLogFromDailyProgress(
     @Param('dailyProgressId') dailyProgressId: string,
     @Param('logId') consumptionLogId: string,
@@ -202,17 +204,20 @@ export class TrackerController {
   }
 
   @Post('consumption-log')
+  @UseInterceptors(ConsumptionLogItemHateoasInterceptor) // <--- Interceptor Individual
   async createLog(@Body() createLogDto: CreateLogDto): Promise<ConsumptionLog> {
     const food: Food = await this.foodService.findOne(createLogDto.foodId);
     return this.consumptionLogService.create(createLogDto, food);
   }
 
   @Get('consumption-log/:id')
+  @UseInterceptors(ConsumptionLogItemHateoasInterceptor) // <--- Interceptor Individual
   findOneLog(@Param('id') id: string): Promise<ConsumptionLog> {
     return this.consumptionLogService.findOne(+id);
   }
 
   @Patch('consumption-log/:id')
+  @UseInterceptors(ConsumptionLogItemHateoasInterceptor) // <--- Interceptor Individual
   updateLog(
     @Param('id') id: string,
     @Body() updateLogDto: UpdateLogDto,
@@ -221,6 +226,7 @@ export class TrackerController {
   }
 
   @Delete('consumption-log/:id')
+  @UseInterceptors(ConsumptionLogDeleteHateoasInterceptor) // <--- Interceptor de Eliminación
   removeLog(@Param('id') id: string): Promise<ConsumptionLog> {
     return this.consumptionLogService.remove(+id);
   }
