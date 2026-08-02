@@ -5,6 +5,7 @@ import { CreateDailyDto } from './dto/create-daily.dto';
 import { UpdateDailyDto } from './dto/update-daily.dto';
 import { Repository, UpdateResult } from 'typeorm';
 import { ConsumptionLog } from './entities/consumption-log.entity';
+import { DEFAULT_TARGET_CALORIES } from './tracker.constants';
 
 @Injectable()
 export class DailyProgressService {
@@ -39,6 +40,34 @@ export class DailyProgressService {
     });
   }
 
+  /**
+   * Obtiene el DailyProgress actualmente activo (no finalizado ni omitido) para un perfil.
+   * Si no existe ninguno activo, genera uno nuevo automáticamente para hoy.
+   */
+  async findActiveByProfile(profileId: number): Promise<DailyProgress> {
+    let active = await this.dailyProgressRepository.findOne({
+      where: { profileId, isFinalized: false, isSkiped: false },
+      relations: ['logs', 'logs.food'],
+      order: { referenceDate: 'DESC', id: 'DESC' },
+    });
+
+    if (!active) {
+      const lastProgress = await this.dailyProgressRepository.findOne({
+        where: { profileId },
+        order: { referenceDate: 'DESC', id: 'DESC' },
+      });
+
+      active = await this.createNextDefaultProgress({
+        profileId,
+        targetCal: lastProgress?.targetCal
+          ? Number(lastProgress.targetCal)
+          : DEFAULT_TARGET_CALORIES,
+      } as DailyProgress);
+    }
+
+    return active;
+  }
+
   async update(
     id: number,
     updateDailyDto: UpdateDailyDto,
@@ -46,18 +75,54 @@ export class DailyProgressService {
     return await this.dailyProgressRepository.update(id, updateDailyDto);
   }
 
-  async toggleFinalizeDay(id: number): Promise<boolean> {
+  /**
+   * Finaliza el día actual y genera el siguiente DailyProgress por defecto
+   */
+  async toggleFinalizeDay(id: number): Promise<DailyProgress> {
     const dailyProgress = await this.findOne(id);
     dailyProgress.isFinalized = !dailyProgress.isFinalized;
     await this.dailyProgressRepository.save(dailyProgress);
-    return dailyProgress.isFinalized;
+
+    if (dailyProgress.isFinalized) {
+      return await this.createNextDefaultProgress(dailyProgress);
+    }
+
+    return dailyProgress;
   }
 
-  async toggleSkipDay(id: number): Promise<boolean> {
+  /**
+   * Omite el día actual y genera el siguiente DailyProgress por defecto
+   */
+  async toggleSkipDay(id: number): Promise<DailyProgress> {
     const dailyProgress = await this.findOne(id);
     dailyProgress.isSkiped = !dailyProgress.isSkiped;
     await this.dailyProgressRepository.save(dailyProgress);
-    return dailyProgress.isSkiped;
+
+    if (dailyProgress.isSkiped) {
+      return await this.createNextDefaultProgress(dailyProgress);
+    }
+
+    return dailyProgress;
+  }
+
+  /**
+   * Método privado auxiliar para crear un nuevo registro de progreso diario por defecto
+   * heredando la meta de calorías (targetCal) y el perfil (profileId) del día anterior.
+   */
+  private async createNextDefaultProgress(
+    previousProgress: DailyProgress,
+  ): Promise<DailyProgress> {
+    const todayString = new Date().toISOString().split('T')[0];
+    const newDailyProgress = this.dailyProgressRepository.create({
+      profileId: previousProgress.profileId,
+      targetCal: previousProgress.targetCal || DEFAULT_TARGET_CALORIES,
+      referenceDate: todayString,
+      totalCaloriesSum: 0,
+      isFinalized: false,
+      isSkiped: false,
+      logs: [],
+    });
+    return await this.dailyProgressRepository.save(newDailyProgress);
   }
 
   async addLogToDailyProgress(

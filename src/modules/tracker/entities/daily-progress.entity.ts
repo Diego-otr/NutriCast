@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Profile } from '../../profiles/entities/profile.entity';
 import { ConsumptionLog } from './consumption-log.entity';
+import { DEFAULT_TARGET_CALORIES } from '../tracker.constants';
 
 @Entity('daily_progress')
 export class DailyProgress {
@@ -17,7 +18,12 @@ export class DailyProgress {
   @Column({ type: 'date' })
   referenceDate: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 2000 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: DEFAULT_TARGET_CALORIES,
+  })
   targetCal: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })

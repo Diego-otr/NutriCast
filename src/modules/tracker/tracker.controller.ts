@@ -68,6 +68,10 @@ export class TrackerController {
           href: '/tracker/daily-progress/profile/{profileId}',
           method: 'GET',
         },
+        findActiveByProfile: {
+          href: '/tracker/daily-progress/profile/{profileId}/active',
+          method: 'GET',
+        },
         update: {
           href: '/tracker/daily-progress/{id}',
           method: 'PATCH',
@@ -134,6 +138,14 @@ export class TrackerController {
     return this.dailyProgressService.create(createDailyDto);
   }
 
+  @Get('daily-progress/profile/:profileId/active')
+  @UseInterceptors(DailyProgressItemHateoasInterceptor) // <--- Interceptor Individual
+  async findActiveByProfile(
+    @Param('profileId') profileId: string,
+  ): Promise<DailyProgress> {
+    return this.dailyProgressService.findActiveByProfile(+profileId);
+  }
+
   @Get('daily-progress/:id')
   @UseInterceptors(DailyProgressItemHateoasInterceptor) // <--- Interceptor Individual
   async findOneDaily(@Param('id') id: string): Promise<DailyProgress> {
@@ -159,13 +171,13 @@ export class TrackerController {
 
   @Patch('daily-progress/:id/finalize')
   @UseInterceptors(DailyProgressItemHateoasInterceptor) // <--- Interceptor Individual
-  async toggleFinalizeDay(@Param('id') id: string): Promise<boolean> {
+  async toggleFinalizeDay(@Param('id') id: string): Promise<DailyProgress> {
     return this.dailyProgressService.toggleFinalizeDay(+id);
   }
 
   @Patch('daily-progress/:id/skip')
   @UseInterceptors(DailyProgressItemHateoasInterceptor) // <--- Interceptor Individual
-  async toggleSkipDay(@Param('id') id: string): Promise<boolean> {
+  async toggleSkipDay(@Param('id') id: string): Promise<DailyProgress> {
     return this.dailyProgressService.toggleSkipDay(+id);
   }
 
