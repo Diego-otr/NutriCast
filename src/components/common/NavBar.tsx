@@ -31,7 +31,7 @@ export const NavBar: React.FC<NavBarProps> = ({
 
   return (
     <nav
-      className={`w-full max-w-md mx-auto grid grid-cols-4 bg-[#7c95f6] rounded-2xl overflow-hidden shadow-lg border border-[#5b73e8]/30 ${className}`}
+      className={`w-full max-w-md mx-auto grid grid-cols-4 bg-[#7c95f6] rounded-none overflow-hidden shadow-lg border-t border-[#5b73e8]/30 ${className}`}
     >
       {navItems.map((tab) => {
         const isSelected = currentActiveTab === tab;

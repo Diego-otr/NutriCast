@@ -14,7 +14,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
 }) => {
   return (
     <header
-      className={`w-full max-w-md mx-auto flex items-center justify-center gap-3 bg-[#7c95f6] text-white py-3.5 px-6 rounded-2xl shadow-md ${className}`}
+      className={`w-full flex items-center justify-center gap-3 bg-[#7c95f6] text-white py-3.5 px-6 rounded-none shadow-md ${className}`}
     >
       <UtensilsCrossed className="w-6 h-6 stroke-[2.5]" />
       <h1 className="font-bold text-xl md:text-2xl tracking-wide">
