@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { TitleBar, NavBar } from "@/components/common";
 import { ButtonFinDia, ButtonPrimary } from "@/components/buttons";
 import { ItemTracker } from "@/components/lists";
+import { ConfirmModal } from "@/components/modals";
 
 interface FoodItem {
   id: string;
@@ -22,17 +23,21 @@ export default function DashboardPage() {
     { id: "4", cal: 100, name: "Fideos" },
   ]);
 
+  // Estado del modal de confirmación
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   // Cálculo de calorías consumidas y restantes
   const totalConsumed = trackerItems.reduce((acc, item) => acc + item.cal, 0);
   const remainingCalories = Math.max(0, dailyGoal - totalConsumed);
 
-  const handleFinalizarDia = () => {
+  const handleConfirmFinalizarDia = () => {
     // TODO: En un futuro, enviar al backend (NestJS) la indicación de terminar el día
     // Ejemplo API: await api.post('/daily-progress/finalize', { profile_id, reference_date })
     console.log("Día finalizado. Enviando indicación al backend...");
 
-    // Limpia la lista de alimentos del tracker
+    // Limpia la lista de alimentos del tracker y cierra el modal
     setTrackerItems([]);
+    setIsConfirmModalOpen(false);
   };
 
   return (
@@ -58,10 +63,10 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          {/* Botón: Finalizar Día */}
+          {/* Botón: Finalizar Día (abre modal de confirmación) */}
           <div className="w-full">
             <ButtonFinDia
-              onClick={handleFinalizarDia}
+              onClick={() => setIsConfirmModalOpen(true)}
               className="w-full py-4 justify-center shadow-lg text-xl"
             />
           </div>
@@ -98,6 +103,17 @@ export default function DashboardPage() {
           <NavBar activeTab="inicio" className="w-full" />
         </footer>
       </main>
+
+      {/* Modal de Confirmación para Finalizar Día */}
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        title="Finalizar Día"
+        text="¿Estás seguro de que deseas finalizar el día?"
+        confirmText="Confirmar"
+        cancelText="Volver"
+        onConfirm={handleConfirmFinalizarDia}
+        onCancel={() => setIsConfirmModalOpen(false)}
+      />
     </div>
   );
 }
