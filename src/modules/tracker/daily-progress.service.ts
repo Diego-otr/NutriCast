@@ -21,7 +21,10 @@ export class DailyProgressService {
 
   async findOne(id: number): Promise<DailyProgress> {
     const dailyProgress: DailyProgress | null =
-      await this.dailyProgressRepository.findOne({ where: { id } });
+      await this.dailyProgressRepository.findOne({
+        where: { id },
+        relations: ['logs', 'logs.food'],
+      });
     if (!dailyProgress) {
       throw new NotFoundException(`DailyProgress with ID ${id} not found`);
     }
@@ -31,6 +34,7 @@ export class DailyProgressService {
   async findAllByProfile(profileId: number): Promise<DailyProgress[]> {
     return await this.dailyProgressRepository.find({
       where: { profileId },
+      relations: ['logs', 'logs.food'],
       order: { referenceDate: 'DESC' },
     });
   }
@@ -61,8 +65,13 @@ export class DailyProgressService {
     consumptionLog: ConsumptionLog,
   ): Promise<DailyProgress> {
     const dailyProgress = await this.findOne(dailyProgressId);
+    if (!dailyProgress.logs) {
+      dailyProgress.logs = [];
+    }
     dailyProgress.logs.push(consumptionLog);
-    dailyProgress.totalCaloriesSum += consumptionLog.calculatedCalories;
+    dailyProgress.totalCaloriesSum =
+      Number(dailyProgress.totalCaloriesSum || 0) +
+      Number(consumptionLog.calculatedCalories || 0);
     await this.dailyProgressRepository.save(dailyProgress);
     return dailyProgress;
   }
@@ -72,10 +81,16 @@ export class DailyProgressService {
     consumptionLog: ConsumptionLog,
   ): Promise<DailyProgress> {
     const dailyProgress = await this.findOne(dailyProgressId);
-    dailyProgress.logs = dailyProgress.logs.filter(
-      (log) => log.id !== consumptionLog.id,
+    if (dailyProgress.logs) {
+      dailyProgress.logs = dailyProgress.logs.filter(
+        (log) => log.id !== consumptionLog.id,
+      );
+    }
+    dailyProgress.totalCaloriesSum = Math.max(
+      0,
+      Number(dailyProgress.totalCaloriesSum || 0) -
+        Number(consumptionLog.calculatedCalories || 0),
     );
-    dailyProgress.totalCaloriesSum -= consumptionLog.calculatedCalories;
     await this.dailyProgressRepository.save(dailyProgress);
     return dailyProgress;
   }

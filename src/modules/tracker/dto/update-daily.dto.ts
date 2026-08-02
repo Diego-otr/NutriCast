@@ -12,6 +12,10 @@ import { PartialType } from '@nestjs/mapped-types/dist/partial-type.helper';
 
 export class UpdateDailyDto extends PartialType(CreateDailyDto) {
   @IsNumber()
+  @IsOptional()
+  targetCal?: number;
+
+  @IsNumber()
   @IsNotEmpty()
   @IsPositive()
   totalCaloriesSum?: number;

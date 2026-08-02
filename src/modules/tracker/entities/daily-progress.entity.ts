@@ -17,6 +17,9 @@ export class DailyProgress {
   @Column({ type: 'date' })
   referenceDate: string;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 2000 })
+  targetCal: number;
+
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   totalCaloriesSum: number;
 

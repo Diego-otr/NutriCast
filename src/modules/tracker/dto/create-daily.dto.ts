@@ -1,4 +1,5 @@
-import { IsNumber, IsNotEmpty, IsString } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsString, IsOptional } from 'class-validator';
+
 export class CreateDailyDto {
   @IsString()
   @IsNotEmpty()
@@ -7,4 +8,8 @@ export class CreateDailyDto {
   @IsNumber()
   @IsNotEmpty()
   profileId: number;
+
+  @IsNumber()
+  @IsOptional()
+  targetCal?: number;
 }
