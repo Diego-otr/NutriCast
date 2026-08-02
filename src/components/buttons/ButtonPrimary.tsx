@@ -6,12 +6,14 @@ import { useButtonVariant, ButtonVariant } from "./useButtonVariant";
 
 interface ButtonPrimaryProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  icon?: React.ReactNode;
   children?: React.ReactNode;
 }
 
 export const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
   variant,
   onClick,
+  icon,
   children = "Registrar Comida",
   className = "",
   ...props
@@ -34,7 +36,7 @@ export const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
           isPressed ? "bg-[#06381a] text-[#34c759]" : "bg-black text-[#34c759]"
         }`}
       >
-        <Plus className="w-5 h-5 stroke-[3]" />
+        {icon ?? <Plus className="w-5 h-5 stroke-[3]" />}
       </span>
     </button>
   );
