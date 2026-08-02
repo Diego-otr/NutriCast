@@ -1,65 +1,132 @@
-import Image from "next/image";
+import {
+  ButtonPrimary,
+  ButtonCancelar,
+  ButtonEditar,
+  ButtonForward,
+  ButtonAdd,
+  ButtonNavTile,
+  ButtonFinDia,
+} from "@/components/buttons";
+import { ItemTracker, ItemFoodList } from "@/components/lists";
+import { NavBar, TitleBar } from "@/components/common";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-[#f3f7e6] text-black p-6 md:p-12 font-mono flex flex-col items-center justify-center gap-10">
+      <div className="w-full max-w-4xl bg-[#f7faeb] border border-zinc-200 rounded-3xl p-6 md:p-10 shadow-xl">
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-10 tracking-tight">
+          UI Kit Componentes
+        </h1>
+
+        {/* Componente TitleBar (Marca/Título) */}
+        <div className="border border-dashed border-purple-300 rounded-2xl p-6 bg-white/50 mb-12">
+          <h2 className="text-xl font-bold text-center mb-4">Marca / Título (TitleBar)</h2>
+          <TitleBar title="MiApp" />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Top Grid of Main Action Buttons */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-start mb-12">
+          {/* Primario */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Primario</span>
+            <ButtonPrimary variant="default" />
+            <ButtonPrimary variant="pressed" />
+          </div>
+
+          {/* Cancelar */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Cancelar</span>
+            <ButtonCancelar variant="default" />
+            <ButtonCancelar variant="pressed" />
+          </div>
+
+          {/* Editar */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Editar</span>
+            <ButtonEditar variant="default" />
+            <ButtonEditar variant="pressed" />
+          </div>
+
+          {/* ButtonForward (Ver Más) */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Ver Más</span>
+            <ButtonForward variant="default" />
+            <ButtonForward variant="pressed" />
+          </div>
+
+          {/* ButtonAdd (Agregar) */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Agregar</span>
+            <ButtonAdd variant="default" />
+            <ButtonAdd variant="pressed" />
+          </div>
         </div>
-      </main>
-    </div>
+
+        {/* Bottom Grid of Nav & Fin Día Buttons */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-5 gap-6 items-start mb-12">
+          {/* Inicio */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Inicio</span>
+            <ButtonNavTile iconType="inicio" variant="default" />
+            <ButtonNavTile iconType="inicio" variant="pressed" />
+          </div>
+
+          {/* Lista */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Lista</span>
+            <ButtonNavTile iconType="lista" variant="default" />
+            <ButtonNavTile iconType="lista" variant="pressed" />
+          </div>
+
+          {/* Grupo */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Grupo</span>
+            <ButtonNavTile iconType="grupo" variant="default" />
+            <ButtonNavTile iconType="grupo" variant="pressed" />
+          </div>
+
+          {/* Ajustes */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Ajustes</span>
+            <ButtonNavTile iconType="ajustes" variant="default" />
+            <ButtonNavTile iconType="ajustes" variant="pressed" />
+          </div>
+
+          {/* Fin Día */}
+          <div className="col-span-2 sm:col-span-1 border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
+            <span className="text-sm font-semibold text-zinc-600">Fin Día</span>
+            <ButtonFinDia variant="default" />
+            <ButtonFinDia variant="pressed" />
+          </div>
+        </div>
+
+        {/* Componente NavBar (Barra de Navegación) */}
+        <div className="border border-dashed border-purple-300 rounded-2xl p-6 bg-white/50 mb-12">
+          <h2 className="text-xl font-bold text-center mb-4">Barra Navegación (NavBar)</h2>
+          <NavBar activeTab="inicio" />
+        </div>
+
+        {/* Grid de Componentes de Listas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Componente ItemTracker */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-6 bg-white/50">
+            <h2 className="text-xl font-bold text-center mb-4">Item Tracker</h2>
+            <div className="flex flex-col gap-3">
+              <ItemTracker cal={150} name="Alimento" />
+              <ItemTracker cal={250} name="Manzana verde" />
+            </div>
+          </div>
+
+          {/* Componente ItemFoodList */}
+          <div className="border border-dashed border-purple-300 rounded-2xl p-6 bg-white/50">
+            <h2 className="text-xl font-bold text-center mb-4">Item Lista de Alimentos</h2>
+            <div className="flex flex-col gap-3">
+              <ItemFoodList name="Alimento" />
+              <ItemFoodList name="Pechuga de Pollo" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
