@@ -1,10 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TitleBar, NavBar } from "@/components/common";
 import { ButtonFinDia, ButtonPrimary } from "@/components/buttons";
 import { ItemTracker } from "@/components/lists";
 import { ConfirmModal } from "@/components/modals";
+import {
+  dailyProgressService,
+  DailyProgressResponse,
+  DEFAULT_TARGET_CALORIES,
+} from "@/features/daily-progress";
 
 interface FoodItem {
   id: string;
@@ -13,31 +18,79 @@ interface FoodItem {
 }
 
 export default function DashboardPage() {
-  const dailyGoal = 2380; // Meta diaria de calorías del perfil
+  // ID del perfil activo (estilo Netflix). En un futuro provendrá del ProfileContext
+  const profileId = 1;
 
-  // Lista inicial de alimentos consumidos en el día (mock de CONSUMPTION_LOG)
-  const [trackerItems, setTrackerItems] = useState<FoodItem[]>([
-    { id: "1", cal: 400, name: "Pollo al horno" },
-    { id: "2", cal: 50, name: "Arroz blanco" },
-    { id: "3", cal: 330, name: "Milanesa Carne" },
-    { id: "4", cal: 100, name: "Fideos" },
-  ]);
-
-  // Estado del modal de confirmación
+  // Estados de datos del backend y UI
+  const [dailyProgress, setDailyProgress] = useState<DailyProgressResponse | null>(null);
+  const [trackerItems, setTrackerItems] = useState<FoodItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  // Cálculo de calorías consumidas y restantes
+  // Meta diaria de calorías provista por el backend o constante por defecto (DEFAULT_TARGET_CALORIES)
+  const targetCal = Number(dailyProgress?.targetCal || DEFAULT_TARGET_CALORIES);
+
+  // Cargar progreso diario activo del perfil directamente desde el backend
+  const fetchActiveDailyProgress = async () => {
+    try {
+      setIsLoading(true);
+      const activeProgress = await dailyProgressService.getActiveByProfile(profileId);
+
+      if (activeProgress) {
+        setDailyProgress(activeProgress);
+
+        // Mapear los consumos (consumption_logs) devueltos por el backend
+        if (activeProgress.logs && activeProgress.logs.length > 0) {
+          const mappedLogs: FoodItem[] = activeProgress.logs.map((log) => ({
+            id: String(log.id),
+            cal: Number(log.calculatedCalories || 0),
+            name: log.food?.name || `Alimento #${log.foodId || log.id}`,
+          }));
+          setTrackerItems(mappedLogs);
+        } else {
+          setTrackerItems([]);
+        }
+      }
+    } catch (err) {
+      console.warn("No se pudo conectar con el backend en puerto 3001, usando datos mock iniciales.");
+      // Fallback amigable con datos de prueba si el backend está apagado o no responde
+      setTrackerItems([
+        { id: "1", cal: 400, name: "Pollo al horno" },
+        { id: "2", cal: 50, name: "Arroz blanco" },
+        { id: "3", cal: 330, name: "Milanesa Carne" },
+        { id: "4", cal: 100, name: "Fideos" },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchActiveDailyProgress();
+  }, [profileId]);
+
+  // Cálculo de calorías consumidas y restantes basadas en targetCal del backend
   const totalConsumed = trackerItems.reduce((acc, item) => acc + item.cal, 0);
-  const remainingCalories = Math.max(0, dailyGoal - totalConsumed);
+  const remainingCalories = Math.max(0, targetCal - totalConsumed);
 
-  const handleConfirmFinalizarDia = () => {
-    // TODO: En un futuro, enviar al backend (NestJS) la indicación de terminar el día
-    // Ejemplo API: await api.post('/daily-progress/finalize', { profile_id, reference_date })
-    console.log("Día finalizado. Enviando indicación al backend...");
-
-    // Limpia la lista de alimentos del tracker y cierra el modal
-    setTrackerItems([]);
-    setIsConfirmModalOpen(false);
+  // Acción de finalizar el día conectando con el backend
+  const handleConfirmFinalizarDia = async () => {
+    try {
+      if (dailyProgress?.id) {
+        // Enviar indicación de finalizar día al backend en NestJS y recibir el nuevo registro diario generado
+        const newDailyProgress = await dailyProgressService.finalizeDay(dailyProgress.id);
+        if (newDailyProgress) {
+          setDailyProgress(newDailyProgress);
+        }
+        console.log(`Día finalizado en el backend. Creado nuevo registro de progreso activo con ID: ${newDailyProgress?.id || 'nuevo'}`);
+      }
+    } catch (err) {
+      console.error("Error al finalizar el día en el backend:", err);
+    } finally {
+      // Limpiar la lista del tracker en pantalla y cerrar modal
+      setTrackerItems([]);
+      setIsConfirmModalOpen(false);
+    }
   };
 
   return (
@@ -51,19 +104,19 @@ export default function DashboardPage() {
 
         {/* Contenido Principal */}
         <div className="flex-1 px-4 flex flex-col gap-4 py-4">
-          {/* Card: Calorías Restantes (Información más importante) */}
+          {/* Card: Calorías Restantes */}
           <section className="bg-[#a7f5d0] rounded-3xl p-5 border border-[#1b3d30] shadow-lg flex flex-col items-start justify-center">
             <h2 className="text-lg font-semibold text-black tracking-tight">
               Calorías Restantes
             </h2>
             <div className="w-full flex items-center justify-center py-2">
               <span className="text-5xl md:text-6xl font-extrabold text-[#0c7336] tracking-tight">
-                {remainingCalories}
+                {isLoading ? "..." : remainingCalories}
               </span>
             </div>
           </section>
 
-          {/* Botón: Finalizar Día (abre modal de confirmación) */}
+          {/* Botón: Finalizar Día */}
           <div className="w-full">
             <ButtonFinDia
               onClick={() => setIsConfirmModalOpen(true)}
@@ -80,7 +133,11 @@ export default function DashboardPage() {
             </div>
 
             <div className="p-3 flex flex-col gap-2.5 max-h-[280px] overflow-y-auto">
-              {trackerItems.length > 0 ? (
+              {isLoading ? (
+                <div className="py-8 text-center text-zinc-700 font-sans italic text-sm">
+                  Cargando consumos del día...
+                </div>
+              ) : trackerItems.length > 0 ? (
                 trackerItems.map((item) => (
                   <ItemTracker key={item.id} cal={item.cal} name={item.name} />
                 ))
