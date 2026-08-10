@@ -17,6 +17,7 @@ export interface CreateConsumptionLogDto {
   foodId: number;
   amountGrams?: number;
   portions?: number;
+  calculatedCalories?: number;
 }
 
 export interface UpdateConsumptionLogDto {

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ButtonNavTile, NavTileType } from "@/components/buttons/ButtonNavTile";
 
 export interface NavBarProps {
@@ -11,11 +12,19 @@ export interface NavBarProps {
 
 const navItems: NavTileType[] = ["inicio", "lista", "grupo", "ajustes"];
 
+const routeMap: Record<NavTileType, string> = {
+  inicio: "/dashboard",
+  lista: "/foods",
+  grupo: "/dashboard",
+  ajustes: "/dashboard",
+};
+
 export const NavBar: React.FC<NavBarProps> = ({
   activeTab,
   onTabChange,
   className = "",
 }) => {
+  const router = useRouter();
   const [internalTab, setInternalTab] = useState<NavTileType>("inicio");
 
   const currentActiveTab = activeTab ?? internalTab;
@@ -26,6 +35,8 @@ export const NavBar: React.FC<NavBarProps> = ({
     }
     if (onTabChange) {
       onTabChange(tab);
+    } else if (routeMap[tab]) {
+      router.push(routeMap[tab]);
     }
   };
 

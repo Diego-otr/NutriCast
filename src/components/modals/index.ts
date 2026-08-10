@@ -1,2 +1,3 @@
-export { ConfirmModal } from "./ConfirmModal";
-export type { ConfirmModalProps } from "./ConfirmModal";
+export * from "./ConfirmModal";
+export * from "./FoodModal";
+export * from "./AddConsumptionModal";

@@ -31,42 +31,52 @@ export default function DashboardPage() {
   const targetCal = Number(dailyProgress?.targetCal || DEFAULT_TARGET_CALORIES);
 
   // Cargar progreso diario activo del perfil directamente desde el backend
-  const fetchActiveDailyProgress = async () => {
-    try {
-      setIsLoading(true);
-      const activeProgress = await dailyProgressService.getActiveByProfile(profileId);
+  useEffect(() => {
+    let isCancelled = false;
 
-      if (activeProgress) {
-        setDailyProgress(activeProgress);
+    const fetchActiveDailyProgress = async () => {
+      try {
+        const activeProgress = await dailyProgressService.getActiveByProfile(profileId);
+        if (isCancelled) return;
 
-        // Mapear los consumos (consumption_logs) devueltos por el backend
-        if (activeProgress.logs && activeProgress.logs.length > 0) {
-          const mappedLogs: FoodItem[] = activeProgress.logs.map((log) => ({
-            id: String(log.id),
-            cal: Number(log.calculatedCalories || 0),
-            name: log.food?.name || `Alimento #${log.foodId || log.id}`,
-          }));
-          setTrackerItems(mappedLogs);
-        } else {
-          setTrackerItems([]);
+        if (activeProgress) {
+          setDailyProgress(activeProgress);
+
+          // Mapear los consumos (consumption_logs) devueltos por el backend
+          if (activeProgress.logs && activeProgress.logs.length > 0) {
+            const mappedLogs: FoodItem[] = activeProgress.logs.map((log) => ({
+              id: String(log.id),
+              cal: Number(log.calculatedCalories || 0),
+              name: log.food?.name || `Alimento #${log.foodId || log.id}`,
+            }));
+            setTrackerItems(mappedLogs);
+          } else {
+            setTrackerItems([]);
+          }
+        }
+      } catch {
+        console.warn("No se pudo conectar con el backend en puerto 3001, usando datos mock iniciales.");
+        if (!isCancelled) {
+          // Fallback amigable con datos de prueba si el backend está apagado o no responde
+          setTrackerItems([
+            { id: "1", cal: 400, name: "Pollo al horno" },
+            { id: "2", cal: 50, name: "Arroz blanco" },
+            { id: "3", cal: 330, name: "Milanesa Carne" },
+            { id: "4", cal: 100, name: "Fideos" },
+          ]);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
         }
       }
-    } catch (err) {
-      console.warn("No se pudo conectar con el backend en puerto 3001, usando datos mock iniciales.");
-      // Fallback amigable con datos de prueba si el backend está apagado o no responde
-      setTrackerItems([
-        { id: "1", cal: 400, name: "Pollo al horno" },
-        { id: "2", cal: 50, name: "Arroz blanco" },
-        { id: "3", cal: 330, name: "Milanesa Carne" },
-        { id: "4", cal: 100, name: "Fideos" },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  useEffect(() => {
     fetchActiveDailyProgress();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [profileId]);
 
   // Cálculo de calorías consumidas y restantes basadas en targetCal del backend
