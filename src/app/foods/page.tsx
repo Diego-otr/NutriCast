@@ -201,12 +201,12 @@ export default function FoodsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#192a68] text-[#171717] flex flex-col items-center justify-between font-mono">
+    <div className="min-h-screen bg-[#f3f7e6] text-[#171717] flex flex-col items-center justify-between font-mono">
       {/* Contenedor vista móvil */}
-      <main className="w-full max-w-md min-h-screen flex flex-col justify-between pb-20 relative bg-[#192a68]">
+      <main className="w-full max-w-md min-h-screen flex flex-col justify-between pb-20 relative bg-[#f3f7e6]">
         {/* Header Superior - TitleBar pegado al tope */}
         <div className="sticky top-0 z-40 w-full">
-          <TitleBar title="MiApp" />
+          <TitleBar title="NutriTracker" />
         </div>
 
         {/* Contenido Principal */}

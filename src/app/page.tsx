@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { UtensilsCrossed, LogIn, UserPlus, Flame, Users, Apple, AlertCircle, Loader2 } from "lucide-react";
+import { UtensilsCrossed, LogIn, UserPlus, Flame, Users, Apple, AlertCircle } from "lucide-react";
 import { authService } from "@/features/auth/services/auth.service";
+import { ButtonPrimary } from "@/components/buttons";
 
 export default function HomeLandingPage() {
   const router = useRouter();
@@ -247,23 +248,15 @@ export default function HomeLandingPage() {
                 />
               </div>
 
-              <button
+              <ButtonPrimary
                 type="submit"
-                disabled={isLoading}
-                className="mt-2 w-full py-3.5 px-6 rounded-2xl bg-[#0c7336] text-white font-bold text-base shadow-md hover:bg-[#095729] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                isLoading={isLoading}
+                icon={<LogIn className="w-5 h-5" />}
+                fullWidth
+                className="mt-2"
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Iniciando sesión...</span>
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="w-5 h-5" />
-                    <span>Ingresar</span>
-                  </>
-                )}
-              </button>
+                Ingresar
+              </ButtonPrimary>
             </form>
           ) : (
             /* Formulario: Registrarse */
@@ -313,23 +306,15 @@ export default function HomeLandingPage() {
                 />
               </div>
 
-              <button
+              <ButtonPrimary
                 type="submit"
-                disabled={isLoading}
-                className="mt-2 w-full py-3.5 px-6 rounded-2xl bg-[#0c7336] text-white font-bold text-base shadow-md hover:bg-[#095729] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                isLoading={isLoading}
+                icon={<UserPlus className="w-5 h-5" />}
+                fullWidth
+                className="mt-2"
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Creando cuenta...</span>
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="w-5 h-5" />
-                    <span>Crear Cuenta</span>
-                  </>
-                )}
-              </button>
+                Crear Cuenta
+              </ButtonPrimary>
             </form>
           )}
         </section>

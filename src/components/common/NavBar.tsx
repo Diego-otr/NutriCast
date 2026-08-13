@@ -42,7 +42,7 @@ export const NavBar: React.FC<NavBarProps> = ({
 
   return (
     <nav
-      className={`w-full max-w-md mx-auto grid grid-cols-4 bg-[#7c95f6] rounded-none overflow-hidden shadow-lg border-t border-[#5b73e8]/30 ${className}`}
+      className={`w-full max-w-md mx-auto grid grid-cols-4 bg-[#368482] rounded-none overflow-hidden shadow-lg border-t border-[#1b3d30]/20 ${className}`}
     >
       {navItems.map((tab) => {
         const isSelected = currentActiveTab === tab;
@@ -52,7 +52,7 @@ export const NavBar: React.FC<NavBarProps> = ({
             iconType={tab}
             variant={isSelected ? "pressed" : "default"}
             onClick={() => handleSelectTab(tab)}
-            className="w-full h-14 rounded-none border-r border-[#5b73e8]/40 last:border-r-0"
+            className="w-full h-14 rounded-none border-r border-[#2c6e6c]/40 last:border-r-0"
           />
         );
       })}

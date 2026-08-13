@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { UtensilsCrossed, UserPlus, AlertCircle, Loader2, ArrowLeft } from "lucide-react";
+import { UtensilsCrossed, UserPlus, AlertCircle, ArrowLeft } from "lucide-react";
 import { authService } from "@/features/auth/services/auth.service";
+import { ButtonPrimary } from "@/components/buttons";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -129,23 +130,15 @@ export default function RegisterPage() {
               />
             </div>
 
-            <button
+            <ButtonPrimary
               type="submit"
-              disabled={isLoading}
-              className="mt-2 w-full py-3.5 px-6 rounded-2xl bg-[#0c7336] text-white font-bold text-base shadow-md hover:bg-[#095729] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              isLoading={isLoading}
+              icon={<UserPlus className="w-5 h-5" />}
+              fullWidth
+              className="mt-2"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Creando cuenta...</span>
-                </>
-              ) : (
-                <>
-                  <UserPlus className="w-5 h-5" />
-                  <span>Crear Cuenta</span>
-                </>
-              )}
-            </button>
+              Crear Cuenta
+            </ButtonPrimary>
           </form>
 
           <div className="text-center text-xs text-zinc-600">

@@ -9,12 +9,12 @@ export interface TitleBarProps {
 }
 
 export const TitleBar: React.FC<TitleBarProps> = ({
-  title = "MiApp",
+  title = "NutriTracker",
   className = "",
 }) => {
   return (
     <header
-      className={`w-full flex items-center justify-center gap-3 bg-[#7c95f6] text-white py-3.5 px-6 rounded-none shadow-md ${className}`}
+      className={`w-full flex items-center justify-center gap-3 bg-[#368482] text-white py-3.5 px-6 rounded-none shadow-md border-b border-[#1b3d30]/20 ${className}`}
     >
       <UtensilsCrossed className="w-6 h-6 stroke-[2.5]" />
       <h1 className="font-bold text-xl md:text-2xl tracking-wide">

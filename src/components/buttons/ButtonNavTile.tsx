@@ -33,8 +33,8 @@ export const ButtonNavTile: React.FC<ButtonNavTileProps> = ({
       onClick={handleClick}
       className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-150 shadow-md active:scale-95 ${
         isPressed
-          ? "bg-[#5b73e8] hover:bg-[#485fd0] text-[#1b2b73]"
-          : "bg-[#7c95f6] hover:bg-[#6882ef] active:bg-[#5b73e8] active:text-[#1b2b73] text-white"
+          ? "bg-[#173b3e] text-[#a7f5d0]"
+          : "bg-[#368482] hover:bg-[#2c6e6c] active:bg-[#173b3e] text-white"
       } ${className}`}
       {...props}
     >
