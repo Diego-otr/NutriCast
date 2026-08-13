@@ -2,7 +2,7 @@ import {
   ButtonPrimary,
   ButtonCancelar,
   ButtonEditar,
-  ButtonForward,
+  ButtonDesplegar,
   ButtonAdd,
   ButtonNavTile,
   ButtonFinDia,
@@ -47,11 +47,11 @@ export default function Home() {
             <ButtonEditar variant="pressed" />
           </div>
 
-          {/* ButtonForward (Ver Más) */}
+          {/* ButtonDesplegar */}
           <div className="border border-dashed border-purple-300 rounded-2xl p-4 flex flex-col items-center gap-4 bg-white/50">
-            <span className="text-sm font-semibold text-zinc-600">Ver Más</span>
-            <ButtonForward variant="default" />
-            <ButtonForward variant="pressed" />
+            <span className="text-sm font-semibold text-zinc-600">Desplegar</span>
+            <ButtonDesplegar isExpanded={false} />
+            <ButtonDesplegar isExpanded={true} />
           </div>
 
           {/* ButtonAdd (Agregar) */}

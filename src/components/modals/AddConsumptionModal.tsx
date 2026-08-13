@@ -9,6 +9,8 @@ import { FoodResponse } from "@/features/foods";
 export interface AddConsumptionModalProps {
   isOpen: boolean;
   food: FoodResponse | null;
+  initialPortions?: number;
+  initialAmountGrams?: number;
   onClose: () => void;
   onConfirm: (data: {
     foodId: number;
@@ -21,6 +23,8 @@ export interface AddConsumptionModalProps {
 export const AddConsumptionModal: React.FC<AddConsumptionModalProps> = ({
   isOpen,
   food,
+  initialPortions,
+  initialAmountGrams,
   onClose,
   onConfirm,
 }) => {
@@ -29,16 +33,36 @@ export const AddConsumptionModal: React.FC<AddConsumptionModalProps> = ({
   const [inputValue, setInputValue] = useState<string>("1");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const isEditing = Boolean(initialPortions !== undefined || initialAmountGrams !== undefined);
+
   // Sincronizar estado al abrir el modal sin causar renders en cascada
   const [prevIsOpen, setPrevIsOpen] = useState(false);
   const [prevFood, setPrevFood] = useState<FoodResponse | null>(null);
+  const [prevPortions, setPrevPortions] = useState<number | undefined>(undefined);
+  const [prevGrams, setPrevGrams] = useState<number | undefined>(undefined);
 
-  if (isOpen !== prevIsOpen || food !== prevFood) {
+  if (
+    isOpen !== prevIsOpen ||
+    food !== prevFood ||
+    initialPortions !== prevPortions ||
+    initialAmountGrams !== prevGrams
+  ) {
     setPrevIsOpen(isOpen);
     setPrevFood(food);
+    setPrevPortions(initialPortions);
+    setPrevGrams(initialAmountGrams);
+
     if (isOpen) {
-      setUnitMode("portions");
-      setInputValue("1");
+      if (initialAmountGrams !== undefined && initialAmountGrams > 0) {
+        setUnitMode("grams");
+        setInputValue(String(initialAmountGrams));
+      } else if (initialPortions !== undefined && initialPortions > 0) {
+        setUnitMode("portions");
+        setInputValue(String(initialPortions));
+      } else {
+        setUnitMode("portions");
+        setInputValue("1");
+      }
       setIsSubmitting(false);
     }
   }
@@ -106,7 +130,7 @@ export const AddConsumptionModal: React.FC<AddConsumptionModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="relative px-6 py-4 border-b border-[#1b3d30]/20 bg-[#a7f5d0] text-center">
           <h3 className="text-xl font-bold text-black tracking-wide pr-6">
-            Registrar &quot;{food.name}&quot;
+            {isEditing ? `Editar "${food.name}"` : `Registrar "${food.name}"`}
           </h3>
 
           <button
@@ -132,7 +156,7 @@ export const AddConsumptionModal: React.FC<AddConsumptionModalProps> = ({
                 type="button"
                 onClick={() => {
                   setUnitMode("portions");
-                  setInputValue("1");
+                  setInputValue(initialPortions ? String(initialPortions) : "1");
                 }}
                 className={`py-2 rounded-full font-bold text-sm transition-all ${
                   unitMode === "portions"
@@ -147,7 +171,7 @@ export const AddConsumptionModal: React.FC<AddConsumptionModalProps> = ({
                 type="button"
                 onClick={() => {
                   setUnitMode("grams");
-                  setInputValue("0");
+                  setInputValue(initialAmountGrams ? String(initialAmountGrams) : "100");
                 }}
                 className={`py-2 rounded-full font-bold text-sm transition-all ${
                   unitMode === "grams"
@@ -206,7 +230,7 @@ export const AddConsumptionModal: React.FC<AddConsumptionModalProps> = ({
                 isConfirmDisabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
               }`}
             >
-              Agregar al Consumo
+              {isEditing ? "Guardar Cambios" : "Agregar al Consumo"}
             </ButtonPrimary>
 
             <ButtonCancelar

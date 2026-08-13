@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { ButtonAdd, ButtonCancelar, ButtonEditar } from "@/components/buttons";
+import { ButtonAdd, ButtonCancelar, ButtonEditar, ButtonDesplegar } from "@/components/buttons";
 
 export interface ItemFoodListProps {
   name?: string;
@@ -57,21 +56,13 @@ export const ItemFoodList: React.FC<ItemFoodListProps> = ({
         className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer select-none hover:bg-[#c6f3db] transition-colors"
       >
         {/* Flecha Desplegar (Izquierda) */}
-        <button
-          type="button"
-          aria-label="Desplegar detalles"
+        <ButtonDesplegar
+          isExpanded={expanded}
           onClick={(e) => {
             e.stopPropagation();
             handleToggle();
           }}
-          className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[#368482] text-white hover:bg-[#2c6e6c] active:scale-95 transition-all shadow shrink-0"
-        >
-          {expanded ? (
-            <ChevronUp className="w-5 h-5 stroke-[2.5]" />
-          ) : (
-            <ChevronDown className="w-5 h-5 stroke-[2.5]" />
-          )}
-        </button>
+        />
 
         {/* Nombre del alimento (Centro) */}
         <span className="font-medium text-base text-black tracking-wide flex-1 text-left">
