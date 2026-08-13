@@ -7,6 +7,7 @@ export class AppService {
     return {
       message: 'API principal - enlaces disponibles',
       _links: {
+        auth: { href: '/auth', method: 'GET' },
         accounts: { href: '/accounts', method: 'GET' },
         profiles: { href: '/profiles', method: 'GET' },
         foods: { href: '/foods', method: 'GET' },

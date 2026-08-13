@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FoodsModule } from './modules/foods/foods.module';
@@ -7,10 +8,14 @@ import { ConfigModule } from '@nestjs/config';
 import { ProfilesModule } from './modules/profiles/profiles.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { TrackerModule } from './modules/tracker/tracker.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -26,8 +31,15 @@ import { TrackerModule } from './modules/tracker/tracker.module';
     ProfilesModule,
     AccountsModule,
     TrackerModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
