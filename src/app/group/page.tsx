@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { User, Plus, Edit2, Trash2, Lock, Settings, Check, Loader2 } from "lucide-react";
+import { User, Plus, Edit2, Trash2, Lock, Settings, Check, Loader2, X } from "lucide-react";
 import { TitleBar, NavBar } from "@/components/common";
 import { authService, UserProfileResponse } from "@/features/auth/services/auth.service";
 import { profilesService, ProfileResponse } from "@/features/profiles/services/profiles.service";
@@ -30,6 +30,11 @@ export default function GroupProfilesPage() {
     }
     return null;
   });
+
+  // Edición del nombre del grupo
+  const [isEditingGroupName, setIsEditingGroupName] = useState(false);
+  const [editedGroupName, setEditedGroupName] = useState("");
+  const [isSavingGroupName, setIsSavingGroupName] = useState(false);
 
   // Modales
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -95,6 +100,27 @@ export default function GroupProfilesPage() {
       }
     } catch (err) {
       console.error("Error al refrescar perfiles:", err);
+    }
+  };
+
+  // Guardar cambio del nombre del grupo
+  const handleSaveGroupName = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!accountData?.id || !editedGroupName.trim()) return;
+
+    try {
+      setIsSavingGroupName(true);
+      await authService.updateAccount(accountData.id, {
+        groupName: editedGroupName.trim(),
+      });
+      setAccountData((prev) =>
+        prev ? { ...prev, groupName: editedGroupName.trim() } : prev
+      );
+      setIsEditingGroupName(false);
+    } catch (err) {
+      console.error("Error al actualizar el nombre del grupo:", err);
+    } finally {
+      setIsSavingGroupName(false);
     }
   };
 
@@ -172,16 +198,66 @@ export default function GroupProfilesPage() {
           ) : (
             <>
               {/* Título de Grupo */}
-              <div className="text-center flex flex-col gap-1">
+              <div className="text-center flex flex-col gap-1 items-center">
                 <span className="text-xs uppercase font-bold tracking-widest text-[#0c7336]">
                   Grupo de Perfiles
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1b3d30]">
-                  {accountData?.groupName || "Mi Grupo"}
-                </h2>
+
+                {isEditingGroupName ? (
+                  <form onSubmit={handleSaveGroupName} className="flex items-center justify-center gap-2 mt-1">
+                    <input
+                      type="text"
+                      value={editedGroupName}
+                      onChange={(e) => setEditedGroupName(e.target.value)}
+                      className="px-3 py-1.5 rounded-xl border border-[#1b3d30] bg-white text-[#1b3d30] font-extrabold text-lg sm:text-xl text-center focus:outline-none focus:ring-2 focus:ring-[#368482]"
+                      placeholder="Nombre del grupo"
+                      autoFocus
+                      required
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSavingGroupName}
+                      className="p-2 rounded-xl bg-[#0c7336] text-white hover:bg-[#095729] active:scale-95 transition-all shadow disabled:opacity-50"
+                      title="Guardar Nombre"
+                    >
+                      {isSavingGroupName ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 stroke-[3]" />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsEditingGroupName(false);
+                        setEditedGroupName(accountData?.groupName || "");
+                      }}
+                      className="p-2 rounded-xl bg-zinc-200 text-zinc-700 hover:bg-zinc-300 active:scale-95 transition-all"
+                      title="Cancelar"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </form>
+                ) : (
+                  <div className="flex items-center justify-center gap-2">
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1b3d30]">
+                      {accountData?.groupName || "Mi Grupo"}
+                    </h2>
+                    {isEditMode && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditedGroupName(accountData?.groupName || "");
+                          setIsEditingGroupName(true);
+                        }}
+                        className="p-1.5 rounded-lg bg-[#d5f7e6] text-[#0c7336] hover:bg-[#bbf2d5] border border-[#1b3d30]/20 active:scale-95 transition-all"
+                        title="Editar nombre del grupo"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 <p className="text-xs text-zinc-600 pt-1">
                   {isEditMode
-                    ? "Selecciona un perfil para editar o eliminar"
+                    ? "Puedes editar el nombre del grupo o gestionar los perfiles"
                     : "¿Quién está utilizando la app hoy?"}
                 </p>
               </div>

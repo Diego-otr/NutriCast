@@ -57,6 +57,11 @@ export const authService = {
     return response.data;
   },
 
+  async updateAccount(id: number, payload: { groupName: string }) {
+    const response = await apiClient.patch(`/accounts/${id}`, payload);
+    return response.data;
+  },
+
   logout(): void {
     removeAuthToken();
   },

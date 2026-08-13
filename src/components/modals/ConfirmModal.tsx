@@ -38,18 +38,23 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           {text}
         </p>
 
-        {/* Botones: Confirmar Arriba, Volver Abajo, ambos rounded-full */}
+        {/* Botones: Confirmar Arriba (Verde), Volver Abajo (Rojo), ambos rounded-full con ícono a la derecha */}
         <div className="w-full flex flex-col items-center gap-3 mt-2">
-          {/* Botón Confirmar (Arriba - Tilde / Check) */}
+          {/* Botón Confirmar (Arriba - Tilde / Check a la derecha) */}
           <ButtonPrimary
             onClick={onConfirm}
-            icon={<Check className="w-5 h-5 stroke-[3]" />}
+            icon={
+              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-black/20 text-white">
+                <Check className="w-5 h-5 stroke-[3]" />
+              </span>
+            }
+            iconPosition="right"
             className="w-full justify-between py-3.5 text-lg rounded-full"
           >
             {confirmText}
           </ButtonPrimary>
 
-          {/* Botón Volver (Abajo - Cruz / X) */}
+          {/* Botón Volver / Cancelar (Abajo - Cruz / X a la derecha) */}
           <ButtonCancelar
             onClick={onCancel}
             icon={
