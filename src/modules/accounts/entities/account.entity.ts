@@ -19,6 +19,9 @@ export class Account {
   @Column({ select: false }) // Por seguridad, no trae la contraseña en consultas comunes
   password: string;
 
+  @Column({ default: 'Mi Grupo' })
+  groupName: string;
+
   @OneToMany(() => Profile, (profile) => profile.account)
   profiles: Profile[];
 

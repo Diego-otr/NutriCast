@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   Delete,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { UpdateAccountDto } from './dto/update-account.dto';
 import type { FindByEmailDto } from './dto/find-by-email.dto';
 import { AccountItemHateoasInterceptor } from './interceptors/account-item-hateoas.interceptor';
 import { AccountDeleteHateoasInterceptor } from './interceptors/account-delete-hateoas.interceptor';
@@ -26,6 +28,7 @@ export class AccountsController {
         create: { href: '/accounts', method: 'POST' },
         findById: { href: '/accounts/{id}', method: 'GET' },
         findByEmail: { href: '/accounts/{email}', method: 'GET' },
+        update: { href: '/accounts/{id}', method: 'PATCH' },
         delete: { href: '/accounts/{id}', method: 'DELETE' },
       },
     };
@@ -47,6 +50,12 @@ export class AccountsController {
   @UseInterceptors(AccountItemHateoasInterceptor) // <--- Interceptor Individual
   findByEmail(@Param('email') email: FindByEmailDto) {
     return this.accountsService.findByEmail(email);
+  }
+
+  @Patch(':id')
+  @UseInterceptors(AccountItemHateoasInterceptor)
+  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
+    return this.accountsService.update(Number(id), updateAccountDto);
   }
 
   @Delete(':id')
