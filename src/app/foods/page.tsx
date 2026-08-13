@@ -9,11 +9,13 @@ import { FoodModal, ConfirmModal, AddConsumptionModal } from "@/components/modal
 import { foodsService, FoodResponse } from "@/features/foods";
 import { dailyProgressService } from "@/features/daily-progress";
 import { consumptionLogService } from "@/features/consumption-log";
+import { authService } from "@/features/auth/services/auth.service";
 
 export default function FoodsPage() {
   const router = useRouter();
   const accountId = 1; // ID de la cuenta compartida
   const [profileId, setProfileId] = useState<number | null>(null);
+  const [groupName, setGroupName] = useState<string>("Mi Grupo");
 
   const [foods, setFoods] = useState<FoodResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -42,14 +44,13 @@ export default function FoodsPage() {
   const fetchFoods = async () => {
     try {
       const data = await foodsService.findByAccount(accountId);
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setFoods(data);
       } else {
-        // Fallback con la lista por defecto del diseño en Figma
         setFoods([]);
       }
     } catch {
-      console.warn("No se pudo conectar con el backend en puerto 3001, usando lista mock inicial.");
+      console.warn("No se pudo conectar con el backend.");
       setFoods([]);
     } finally {
       setIsLoading(false);
@@ -73,16 +74,20 @@ export default function FoodsPage() {
       if (!isCancelled) setProfileId(Number(savedProfileId));
 
       try {
+        const meData = await authService.getMe();
+        if (!isCancelled && meData.account?.groupName) {
+          setGroupName(meData.account.groupName);
+        }
+
         const data = await foodsService.findByAccount(accountId);
         if (isCancelled) return;
 
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setFoods(data);
         } else {
-          setFoods(defaultMockFoods);
+          setFoods([]);
         }
       } catch {
-        console.warn("No se pudo conectar con el backend en puerto 3001, usando lista mock inicial.");
         if (!isCancelled) {
           setFoods([]);
         }
@@ -231,7 +236,7 @@ export default function FoodsPage() {
             {/* Título de la tarjeta */}
             <div className="px-6 py-3 border-b border-[#1b3d30]/20 bg-[#a7f5d0] text-center shrink-0">
               <h2 className="text-xl font-bold text-black tracking-wide">
-                Lista de &apos;Usuario&apos;
+                Lista de {groupName}
               </h2>
             </div>
 
@@ -323,14 +328,3 @@ export default function FoodsPage() {
     </div>
   );
 }
-
-// Lista por defecto para visualización inicial coincidente con la captura de Figma
-const defaultMockFoods: FoodResponse[] = [
-  { id: 1, name: "Fideos", caloriesPerGram: 1.5, caloriesPerPortion: 180, proteins: 7, carbs: 35, fats: 2 },
-  { id: 2, name: "Milanesa Carne", caloriesPerGram: 2.1, caloriesPerPortion: 330, proteins: 28, carbs: 15, fats: 16 },
-  { id: 3, name: "Arroz", caloriesPerGram: 1.3, caloriesPerPortion: 130, proteins: 3, carbs: 28, fats: 0.5 },
-  { id: 4, name: "Tortilla Papa", caloriesPerGram: 1.8, caloriesPerPortion: 280, proteins: 6, carbs: 26, fats: 14 },
-  { id: 5, name: "Salchicha", caloriesPerGram: 2.5, caloriesPerPortion: 150, proteins: 6, carbs: 2, fats: 13 },
-  { id: 6, name: "Pollo al horno", caloriesPerGram: 1.6, caloriesPerPortion: 400, proteins: 45, carbs: 0, fats: 18 },
-  { id: 7, name: "Arroz con atun", caloriesPerGram: 1.4, caloriesPerPortion: 220, proteins: 18, carbs: 24, fats: 5 },
-];
