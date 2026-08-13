@@ -35,8 +35,20 @@ export const NavBar: React.FC<NavBarProps> = ({
     }
     if (onTabChange) {
       onTabChange(tab);
-    } else if (routeMap[tab]) {
-      router.push(routeMap[tab]);
+    } else {
+      const selectedProfileId =
+        typeof window !== "undefined"
+          ? localStorage.getItem("selected_profile_id")
+          : null;
+
+      if (!selectedProfileId && tab !== "grupo") {
+        router.push("/group");
+        return;
+      }
+
+      if (routeMap[tab]) {
+        router.push(routeMap[tab]);
+      }
     }
   };
 

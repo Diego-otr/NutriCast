@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { TitleBar, NavBar } from "@/components/common";
 import { ButtonPrimary } from "@/components/buttons";
 import { ItemFoodList } from "@/components/lists";
@@ -10,8 +11,9 @@ import { dailyProgressService } from "@/features/daily-progress";
 import { consumptionLogService } from "@/features/consumption-log";
 
 export default function FoodsPage() {
+  const router = useRouter();
   const accountId = 1; // ID de la cuenta compartida
-  const profileId = 1; // ID del perfil activo
+  const [profileId, setProfileId] = useState<number | null>(null);
 
   const [foods, setFoods] = useState<FoodResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -44,11 +46,11 @@ export default function FoodsPage() {
         setFoods(data);
       } else {
         // Fallback con la lista por defecto del diseño en Figma
-        setFoods(defaultMockFoods);
+        setFoods([]);
       }
     } catch {
       console.warn("No se pudo conectar con el backend en puerto 3001, usando lista mock inicial.");
-      setFoods(defaultMockFoods);
+      setFoods([]);
     } finally {
       setIsLoading(false);
     }
@@ -58,6 +60,18 @@ export default function FoodsPage() {
     let isCancelled = false;
 
     const loadFoods = async () => {
+      const savedProfileId =
+        typeof window !== "undefined"
+          ? localStorage.getItem("selected_profile_id")
+          : null;
+
+      if (!savedProfileId) {
+        router.push("/group");
+        return;
+      }
+
+      if (!isCancelled) setProfileId(Number(savedProfileId));
+
       try {
         const data = await foodsService.findByAccount(accountId);
         if (isCancelled) return;
@@ -70,7 +84,7 @@ export default function FoodsPage() {
       } catch {
         console.warn("No se pudo conectar con el backend en puerto 3001, usando lista mock inicial.");
         if (!isCancelled) {
-          setFoods(defaultMockFoods);
+          setFoods([]);
         }
       } finally {
         if (!isCancelled) {
@@ -84,7 +98,7 @@ export default function FoodsPage() {
     return () => {
       isCancelled = true;
     };
-  }, [accountId]);
+  }, [router]);
 
   // Abrir modal para crear nuevo alimento
   const handleOpenCreateModal = () => {
@@ -175,6 +189,7 @@ export default function FoodsPage() {
     amountGrams?: number;
     calculatedCalories: number;
   }) => {
+    if (!profileId) return;
     try {
       const activeProgress = await dailyProgressService.getActiveByProfile(profileId);
       if (activeProgress?.id) {

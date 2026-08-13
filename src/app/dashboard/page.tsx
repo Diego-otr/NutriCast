@@ -30,8 +30,8 @@ interface FoodItem {
 export default function DashboardPage() {
   const router = useRouter();
 
-  // ID del perfil activo (estilo Netflix). En un futuro provendrá del ProfileContext
-  const profileId = 1;
+  // ID del perfil activo cargado desde localStorage
+  const [profileId, setProfileId] = useState<number | null>(null);
 
   // Estados de datos del backend y UI
   const [dailyProgress, setDailyProgress] = useState<DailyProgressResponse | null>(null);
@@ -59,8 +59,21 @@ export default function DashboardPage() {
     let isCancelled = false;
 
     const fetchActiveDailyProgress = async () => {
+      const savedProfileId =
+        typeof window !== "undefined"
+          ? localStorage.getItem("selected_profile_id")
+          : null;
+
+      if (!savedProfileId) {
+        router.push("/group");
+        return;
+      }
+
+      const activeId = Number(savedProfileId);
+      if (!isCancelled) setProfileId(activeId);
+
       try {
-        const activeProgress = await dailyProgressService.getActiveByProfile(profileId);
+        const activeProgress = await dailyProgressService.getActiveByProfile(activeId);
         if (isCancelled) return;
 
         if (activeProgress) {
@@ -140,7 +153,7 @@ export default function DashboardPage() {
     return () => {
       isCancelled = true;
     };
-  }, [profileId]);
+  }, [profileId, router]);
 
   // Manejo de acordeón exclusivo
   const handleToggleExpand = (id: string) => {
