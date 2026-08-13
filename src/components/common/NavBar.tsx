@@ -15,7 +15,7 @@ const navItems: NavTileType[] = ["inicio", "lista", "grupo", "ajustes"];
 const routeMap: Record<NavTileType, string> = {
   inicio: "/dashboard",
   lista: "/foods",
-  grupo: "/dashboard",
+  grupo: "/group",
   ajustes: "/dashboard",
 };
 

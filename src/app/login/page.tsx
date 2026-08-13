@@ -29,7 +29,7 @@ export default function LoginPage() {
         email: email.trim(),
         password,
       });
-      router.push("/dashboard");
+      router.push("/group");
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const res = (err as { response?: { data?: { message?: string | string[] } } }).response;
