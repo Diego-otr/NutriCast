@@ -58,7 +58,7 @@ export default function LoginPage() {
         </Link>
         <div className="flex items-center gap-2">
           <UtensilsCrossed className="w-6 h-6 stroke-[2.5]" />
-          <h1 className="font-bold text-xl md:text-2xl tracking-wide">NutriTracker</h1>
+          <h1 className="font-bold text-xl md:text-2xl tracking-wide">NutriCast</h1>
         </div>
         <div className="w-16" />
       </header>
@@ -129,7 +129,7 @@ export default function LoginPage() {
       </div>
 
       <footer className="w-full py-4 text-center text-xs text-zinc-600 border-t border-[#1b3d30]/10 bg-[#f7faeb]">
-        <span>NutriTracker &copy; 2026 — Control nutricional diario</span>
+        <span>NutriCast &copy; 2026 — Control nutricional diario</span>
       </footer>
     </main>
   );

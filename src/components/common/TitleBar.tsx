@@ -14,7 +14,7 @@ export interface TitleBarProps {
 }
 
 export const TitleBar: React.FC<TitleBarProps> = ({
-  title = "NutriTracker",
+  title = "NutriCast",
   groupName: propGroupName,
   showLogout = true,
   onLogout,

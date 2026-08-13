@@ -106,7 +106,7 @@ export default function HomeLandingPage() {
       {/* Header Superior estilo Marca */}
       <header className="w-full flex items-center justify-center gap-3 bg-[#368482] text-white py-4 px-6 shadow-md border-b border-[#1b3d30]/20">
         <UtensilsCrossed className="w-7 h-7 stroke-[2.5]" />
-        <h1 className="font-bold text-2xl md:text-3xl tracking-wide">NutriTracker</h1>
+        <h1 className="font-bold text-2xl md:text-3xl tracking-wide">NutriCast</h1>
         <UtensilsCrossed className="w-7 h-7 stroke-[2.5]" />
       </header>
 
@@ -322,7 +322,7 @@ export default function HomeLandingPage() {
 
       {/* Footer */}
       <footer className="w-full py-4 text-center text-xs text-zinc-600 border-t border-[#1b3d30]/10 bg-[#f7faeb]">
-        <span>NutriTracker &copy; 2026 — Control nutricional diario</span>
+        <span>NutriCast &copy; 2026 — Control nutricional diario</span>
       </footer>
     </main>
   );

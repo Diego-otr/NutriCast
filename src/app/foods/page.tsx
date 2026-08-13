@@ -226,7 +226,7 @@ export default function FoodsPage() {
       <main className="w-full max-w-md min-h-screen flex flex-col justify-between pb-20 relative bg-[#f3f7e6]">
         {/* Header Superior - TitleBar pegado al tope */}
         <div className="sticky top-0 z-40 w-full">
-          <TitleBar title="NutriTracker" />
+          <TitleBar title="NutriCast" />
         </div>
 
         {/* Contenido Principal */}
